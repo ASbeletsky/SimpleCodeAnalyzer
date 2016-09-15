@@ -1,5 +1,9 @@
 package bl.model;
 
+import bl.model.modifier.IAbstractModifier;
+import bl.model.modifier.IAccessModifier;
+import bl.model.modifier.IFinalModifier;
+import bl.model.modifier.IStaticModifier;
 import com.sun.istack.internal.NotNull;
 
 import java.util.List;
@@ -7,15 +11,7 @@ import java.util.List;
 /**
  * Created by Peter on 14.09.2016.
  */
-public interface IAnalyticClass extends IAnalytic {
-    Visibility getVisibility();
-
-    boolean isFinal();
-
-    boolean isStatic();
-
-    boolean isAbstract();
-
+public interface IAnalyticClass extends IAnalytic, IAccessModifier, IAbstractModifier, IFinalModifier, IStaticModifier {
     @NotNull
     List<IAnalyticProperty> getProperties();
 
@@ -30,6 +26,9 @@ public interface IAnalyticClass extends IAnalytic {
 
     @NotNull
     List<IAnalyticClass> getInterfaces();
+
+    @NotNull
+    List<IAnalyticClass> getDependencies();
 
     //TODO: annotations
 }

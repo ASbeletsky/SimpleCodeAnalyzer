@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * Created by Peter on 14.09.2016.
  */
-class AnalyticFileImpl implements IAnalyticFile {
+class AnalyticFile implements IAnalyticFile {
     private final String src;
     private final List<IAnalyticClass> classes = new ArrayList<>();
 
-    public AnalyticFileImpl(String src) {
+    public AnalyticFile(String src) {
         this.src = src;
     }
 

@@ -1,16 +1,20 @@
 package bl.model.impl;
 
 import bl.model.IAnalytic;
-import bl.model.IAnalyticProperty;
-import bl.model.Visibility;
+import bl.model.IAnalyticMethod;
+import com.sun.deploy.panel.IProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Peter on 14.09.2016.
  */
-class AnalyticPropertyImpl implements IAnalyticProperty {
+class AnalyticMethod implements IAnalyticMethod {
     private final String src;
+    private final List<IProperty> parameters = new ArrayList<>();
 
-    public AnalyticPropertyImpl(String src) {
+    public AnalyticMethod(String src) {
         this.src = src;
     }
 
@@ -25,13 +29,8 @@ class AnalyticPropertyImpl implements IAnalyticProperty {
     }
 
     @Override
-    public Visibility getVisibility() {
+    public Visibility getAccessModifier() {
         return null;
-    }
-
-    @Override
-    public boolean isFinal() {
-        return false;
     }
 
     @Override
@@ -40,8 +39,23 @@ class AnalyticPropertyImpl implements IAnalyticProperty {
     }
 
     @Override
-    public String getValue() {
+    public boolean isFinal() {
+        return false;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    public String getResultType() {
         return null;
+    }
+
+    @Override
+    public List<IProperty> getParameters() {
+        return parameters;
     }
 
     @Override

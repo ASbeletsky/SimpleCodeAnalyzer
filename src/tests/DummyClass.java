@@ -1,4 +1,4 @@
-package bl.test;
+package tests;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
@@ -58,7 +58,7 @@ public abstract class DummyClass implements Runnable {
         @SuppressWarnings("unused")
         public <Q> T getGeneric(@Nullable List<? super Q> inParamGeneric, int x) throws IOException, IOException {
             try {
-                Object o = Class.forName("bl.test.DummyClass")
+                Object o = Class.forName("tests.DummyClass")
                         .getDeclaredConstructor(int.class)
                         .newInstance(1);
             } catch (ClassNotFoundException | ClassCastException | NoSuchMethodException t) {

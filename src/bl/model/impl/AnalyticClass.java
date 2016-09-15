@@ -8,16 +8,17 @@ import java.util.List;
 /**
  * Created by Peter on 14.09.2016.
  */
-class AnalyticClassImpl implements IAnalyticClass {
+class AnalyticClass implements IAnalyticClass {
     private final String src;
     private final List<IAnalyticProperty> properties = new ArrayList<>();
     private final List<IAnalyticMethod> methods = new ArrayList<>();
     private final List<IAnalyticClass> insertedClasses = new ArrayList<>();
     private final List<IAnalyticClass> interfaces = new ArrayList<>();
+    private final List<IAnalyticClass> dependencies = new ArrayList<>();
     private IAnalyticClass superclass;
 
 
-    public AnalyticClassImpl(String src) {
+    public AnalyticClass(String src) {
         this.src = src;
     }
 
@@ -32,7 +33,7 @@ class AnalyticClassImpl implements IAnalyticClass {
     }
 
     @Override
-    public Visibility getVisibility() {
+    public Visibility getAccessModifier() {
         return null;
     }
 
@@ -74,6 +75,11 @@ class AnalyticClassImpl implements IAnalyticClass {
     @Override
     public List<IAnalyticClass> getInterfaces() {
         return interfaces;
+    }
+
+    @Override
+    public List<IAnalyticClass> getDependencies() {
+        return dependencies;
     }
 
     @Override

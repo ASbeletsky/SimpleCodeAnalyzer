@@ -1,4 +1,4 @@
-package bl.test;
+package tests;
 
 /**
  * Created by Peter on 14.09.2016.

@@ -8,6 +8,6 @@ import bl.model.IAnalyticFile;
 public class Parser {
     public static IAnalyticFile parse(String src) {
         //todo
-        return new AnalyticFileImpl(src);
+        return new AnalyticFile(src);
     }
 }
