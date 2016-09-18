@@ -49,6 +49,11 @@ class AnalyticMethod implements IAnalyticMethod {
     }
 
     @Override
+    public boolean isSynchronized() {
+        return false;
+    }
+
+    @Override
     public String getResultType() {
         return null;
     }
@@ -56,6 +61,11 @@ class AnalyticMethod implements IAnalyticMethod {
     @Override
     public List<IProperty> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public String getGenericSrc() {
+        return null;
     }
 
     @Override
