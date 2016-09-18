@@ -9,7 +9,15 @@ import java.util.List;
 /**
  * Created by Peter on 14.09.2016.
  */
-public interface IAnalyticMethod extends IAnalytic, IAccessModifier, IAbstractModifier, IFinalModifier, IStaticModifier, ISynchronizedModifier {
+public interface IAnalyticMethod extends
+        IAnalytic,
+        IAccessModifier,
+        IAbstractModifier,
+        IFinalModifier,
+        IStaticModifier,
+        ISynchronizedModifier,
+        IGenericModifier {
+
     @NotNull
     String getResultType();
 

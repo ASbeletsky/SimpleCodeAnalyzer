@@ -1,9 +1,13 @@
-package tests;
+package    tests   ;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
+import java.io.Serializable;
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +15,7 @@ import java.util.List;
 /**
  * Created by Peter on 14.09.2016.
  */
-public abstract class DummyClass implements Runnable {
+public abstract class DummyClass implements Runnable, Serializable, Externalizable {
     public static final String TAG = "dummy psf TAG";
     private final int value = 0;
     protected char[] chars = new char[10];
@@ -32,12 +36,17 @@ public abstract class DummyClass implements Runnable {
         this();
     }
 
+    @Override
+    public void run() {
+
+    }
+
     @SuppressWarnings("unused")
     double dummyMethod(int a, Float b) {
         return a + (b != null ? b : 0);
     }
 
-    public abstract static class InClass<T extends DummyClass & Cloneable>
+    private abstract static class InClass<T extends DummyClass & Cloneable>
             extends DummyClass
             implements Cloneable, Runnable, Collection<T> {
         T generic;
@@ -112,11 +121,22 @@ public abstract class DummyClass implements Runnable {
         return Integer.MIN_VALUE;
     }
 
+
 }
 
 final class OutClass extends DummyClass {
     @Override
     public void run() {
+
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
     }
 }

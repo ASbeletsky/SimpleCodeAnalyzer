@@ -64,6 +64,11 @@ class AnalyticMethod implements IAnalyticMethod {
     }
 
     @Override
+    public String getGenericSrc() {
+        return null;
+    }
+
+    @Override
     public int compareTo(IAnalytic o) {
         return 0;
     }

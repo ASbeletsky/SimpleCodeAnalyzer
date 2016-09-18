@@ -10,4 +10,7 @@ import java.util.List;
 public interface IAnalyticFile extends IAnalytic {
     @NotNull
     List<IAnalyticClass> getClasses();
+
+    @NotNull
+    String getPackage();
 }
