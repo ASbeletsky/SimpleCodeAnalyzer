@@ -49,6 +49,11 @@ class AnalyticMethod implements IAnalyticMethod {
     }
 
     @Override
+    public boolean isSynchronized() {
+        return false;
+    }
+
+    @Override
     public String getResultType() {
         return null;
     }
