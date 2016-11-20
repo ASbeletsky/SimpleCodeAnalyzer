@@ -39,4 +39,9 @@ public abstract class AnalyticBase<TCodeBlock extends Node> implements IAnalytic
     public String getSourceCode(){
         return  this.source;
     }
+
+    @Override
+    public int compareTo(IAnalytic o) {
+        return 0;
+    }
 }

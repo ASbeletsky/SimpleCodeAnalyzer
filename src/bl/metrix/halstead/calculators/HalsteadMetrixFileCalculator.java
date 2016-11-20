@@ -1,36 +1,25 @@
 package bl.metrix.halstead.calculators;
 
-import bl.model.IAnalyticClass;
 import bl.model.IAnalyticFile;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.Node;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Anton 09.10.2016.
  */
 public class HalsteadMetrixFileCalculator extends HalsteadMetrixCalculatorBase<IAnalyticFile> {
-    private IAnalyticFile analyticFile;
     public HalsteadMetrixFileCalculator(IAnalyticFile analyticFile) throws ParseException {
-        super();
-        this.analyticFile = analyticFile;
+        super(analyticFile);
     }
 
     @Override
-    public int calculateNumberOfUniqueOperands() {
-        return 0;
-    }
+    protected List<Node> getAnalyticAbstractTree() {
+        List<Node> fileClassesAbstractTree = this.analyticUnit.getClasses().stream()
+                .map(_class -> (Node) _class.getAbstractSynaxTree())
+                .collect(Collectors.toList());
 
-    @Override
-    public int calculateNumberOfOperands() {
-        return 0;
-    }
-
-    @Override
-    public int calculateNumberOfUniqueOperators() {
-        return 0;
-    }
-
-    @Override
-    public int calculateNumberOfOperators() {
-        return 0;
+         return  fileClassesAbstractTree;
     }
 }

@@ -15,5 +15,5 @@ public interface IAnalyticMethod extends IAnalytic<MethodDeclaration> {
     String getResultType();
 
     @NotNull
-    List<IAnalyticProperty> getParameters();
+    List<IAnalyticParameter> getParameters();
 }

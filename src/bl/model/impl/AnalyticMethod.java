@@ -2,7 +2,8 @@ package bl.model.impl;
 
 import bl.model.IAnalytic;
 import bl.model.IAnalyticMethod;
-import bl.model.IAnalyticProperty;
+
+import bl.model.IAnalyticParameter;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by Peter on 14.09.2016.
  */
 public class AnalyticMethod extends AnalyticBase<MethodDeclaration> implements IAnalyticMethod {
-    private final List<IAnalyticProperty> parameters = new ArrayList<>();
+    private final List<IAnalyticParameter> parameters = new ArrayList<>();
 
     public AnalyticMethod(String source) throws ParseException {
         this((MethodDeclaration) JavaParser.parseClassBodyDeclaration(source));
@@ -22,7 +23,7 @@ public class AnalyticMethod extends AnalyticBase<MethodDeclaration> implements I
 
     private void fillMethodParams(){
        for (Parameter parameter : this.codeBlock.getParameters()){
-           parameters.add(new AnalyticProperty(parameter));
+           parameters.add(new AnalyticParameter(parameter));
        }
     }
 
@@ -41,7 +42,7 @@ public class AnalyticMethod extends AnalyticBase<MethodDeclaration> implements I
     }
 
     @Override
-    public List<IAnalyticProperty> getParameters() {
+    public List<IAnalyticParameter> getParameters() {
         return parameters;
     }
 
