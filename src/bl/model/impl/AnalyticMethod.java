@@ -2,68 +2,50 @@ package bl.model.impl;
 
 import bl.model.IAnalytic;
 import bl.model.IAnalyticMethod;
-import com.sun.deploy.panel.IProperty;
-
+import bl.model.IAnalyticProperty;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Peter on 14.09.2016.
  */
-class AnalyticMethod implements IAnalyticMethod {
-    private final String src;
-    private final List<IProperty> parameters = new ArrayList<>();
+public class AnalyticMethod extends AnalyticBase<MethodDeclaration> implements IAnalyticMethod {
+    private final List<IAnalyticProperty> parameters = new ArrayList<>();
 
-    public AnalyticMethod(String src) {
-        this.src = src;
+    public AnalyticMethod(String source) throws ParseException {
+        this((MethodDeclaration) JavaParser.parseClassBodyDeclaration(source));
+    }
+
+    private void fillMethodParams(){
+       for (Parameter parameter : this.codeBlock.getParameters()){
+           parameters.add(new AnalyticProperty(parameter));
+       }
+    }
+
+    public AnalyticMethod(MethodDeclaration declaration){
+        super(declaration);
     }
 
     @Override
     public String getName() {
-        return null;
-    }
-
-    @Override
-    public String getSrcCode() {
-        return null;
-    }
-
-    @Override
-    public Visibility getAccessModifier() {
-        return null;
-    }
-
-    @Override
-    public boolean isStatic() {
-        return false;
-    }
-
-    @Override
-    public boolean isFinal() {
-        return false;
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return false;
-    }
-
-    @Override
-    public boolean isSynchronized() {
-        return false;
+        return this.codeBlock.getName();
     }
 
     @Override
     public String getResultType() {
-        return null;
+        return this.codeBlock.getType().toString();
     }
 
     @Override
-    public List<IProperty> getParameters() {
+    public List<IAnalyticProperty> getParameters() {
         return parameters;
     }
 
-    @Override
+     @Override
     public int compareTo(IAnalytic o) {
         return 0;
     }

@@ -6,7 +6,7 @@ package bl.model.modifier;
 public interface IAccessModifier {
     Visibility getAccessModifier();
 
-    enum Visibility {
+    enum Visibility{
         PUBLIC,
         PROTECTED,
         PACKAGE_LOCAL,
