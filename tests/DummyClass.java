@@ -113,7 +113,8 @@ public abstract class DummyClass implements Runnable {
 }
 
 final class OutClass extends DummyClass {
-    @Override
+    int a = 0;
+
     public void run() {
 
     }

@@ -5,6 +5,7 @@ import bl.model.IAnalyticClass;
 import bl.model.IAnalyticFile;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import java.io.*;
 import java.util.ArrayList;
@@ -18,8 +19,10 @@ public class AnalyticFile extends AnalyticBase<CompilationUnit> implements IAnal
 
     private void scanClassesInFile(){
         for(TypeDeclaration declaration: super.codeBlock.getTypes()){
-            AnalyticClass analyticClass = new AnalyticClass(declaration);
-            this.classes.add(analyticClass);
+            if(declaration instanceof ClassOrInterfaceDeclaration) {
+                AnalyticClass analyticClass = new AnalyticClass((ClassOrInterfaceDeclaration) declaration);
+                this.classes.add(analyticClass);
+            }
         }
     }
 
@@ -41,10 +44,5 @@ public class AnalyticFile extends AnalyticBase<CompilationUnit> implements IAnal
     @Override
     public List<IAnalyticClass> getClasses() {
         return classes;
-    }
-
-    @Override
-    public int compareTo(IAnalytic o) {
-        return 0;
     }
 }

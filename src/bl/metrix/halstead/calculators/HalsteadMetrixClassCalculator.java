@@ -1,62 +1,25 @@
 package bl.metrix.halstead.calculators;
 
-import bl.metrix.halstead.IHalsteadMetrixCalculator;
 import bl.model.IAnalyticClass;
-import bl.model.IAnalyticMethod;
-import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.Node;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Anton on 09.10.2016.
  */
 public class HalsteadMetrixClassCalculator extends HalsteadMetrixCalculatorBase<IAnalyticClass> {
-    private HalsteadMetrixMethodCalculator methodCalculator;
-    private IAnalyticClass analyticUnit;
-    public HalsteadMetrixClassCalculator(IAnalyticClass analyticClass) throws ParseException {
-        super();
-        this.analyticUnit = analyticClass;
+    public HalsteadMetrixClassCalculator(IAnalyticClass analyticClass) {
+        super(analyticClass);
     }
 
     @Override
-    public int calculateNumberOfUniqueOperands(){
-        int numberOfUniqueOperands = 0;
-        for(IAnalyticMethod method : analyticUnit.getMethods()){
-            IHalsteadMetrixCalculator<IAnalyticMethod> methodCalculator = new HalsteadMetrixMethodCalculator(method);
-            numberOfUniqueOperands += methodCalculator.calculateNumberOfUniqueOperands();
-        }
+    protected List<Node> getAnalyticAbstractTree() {
+        Stream<Node> classMethodsAbstractTree = this.analyticUnit.getMethods().stream().map(method -> (Node)method.getAbstractSynaxTree());
+        Stream<Node> classFieldsAbstractTree = this.analyticUnit.getFields().stream().map(field -> (Node)field.getAbstractSynaxTree());
 
-        return  numberOfUniqueOperands;
-    }
-
-    @Override
-    public int calculateNumberOfOperands(){
-        int numberOfOperands = 0;
-        for(IAnalyticMethod method : analyticUnit.getMethods()){
-            IHalsteadMetrixCalculator<IAnalyticMethod> methodCalculator = new HalsteadMetrixMethodCalculator(method);
-            numberOfOperands += methodCalculator.calculateNumberOfOperands();
-        }
-
-        return  numberOfOperands;
-    }
-
-    @Override
-    public int calculateNumberOfUniqueOperators(){
-        int numberOfUniqueOperators = 0;
-        for(IAnalyticMethod method : analyticUnit.getMethods()){
-            IHalsteadMetrixCalculator<IAnalyticMethod> methodCalculator = new HalsteadMetrixMethodCalculator(method);
-            numberOfUniqueOperators += methodCalculator.calculateNumberOfUniqueOperators();
-        }
-
-        return  numberOfUniqueOperators;
-    }
-
-    @Override
-    public int calculateNumberOfOperators(){
-        int numberOfOperators = 0;
-        for(IAnalyticMethod method : analyticUnit.getMethods()){
-            IHalsteadMetrixCalculator<IAnalyticMethod> methodCalculator = new HalsteadMetrixMethodCalculator(method);
-            numberOfOperators += methodCalculator.calculateNumberOfOperators();
-        }
-
-        return  numberOfOperators;
+        return Stream.concat(classMethodsAbstractTree, classFieldsAbstractTree).collect(Collectors.toList());
     }
 }

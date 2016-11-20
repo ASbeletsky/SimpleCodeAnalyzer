@@ -6,12 +6,14 @@ import bl.model.IAnalytic;
  * Created by Anton on 09.10.2016.
  */
 public interface IHalsteadMetrixCalculator<TAnalytic extends IAnalytic>   {
-    public int getProgramVocabulary();
-    public int getProgramLength();
-    public double getProgramVolume();
+    int getNumberOfUniqueOperands();
+    int getNumberOfOperands();
+    int getNumberOfUniqueOperators();
+    int getNumberOfOperators();
 
-    int calculateNumberOfUniqueOperands();
-    int calculateNumberOfOperands();
-    int calculateNumberOfUniqueOperators();
-    int calculateNumberOfOperators();
+    int getProgramVocabulary();
+    int getProgramLength();
+    double getProgramVolume();
+
+    void calculateMetrix();
 }
