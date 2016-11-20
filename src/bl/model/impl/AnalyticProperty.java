@@ -2,15 +2,18 @@ package bl.model.impl;
 
 import bl.model.IAnalytic;
 import bl.model.IAnalyticProperty;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.AccessSpecifier;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.NameExpr;
 
 /**
  * Created by Peter on 14.09.2016.
  */
-class AnalyticProperty implements IAnalyticProperty {
-    private final String src;
+public class AnalyticProperty extends AnalyticBase<Parameter>  implements IAnalyticProperty{
 
-    public AnalyticProperty(String src) {
-        this.src = src;
+    public AnalyticProperty(Parameter parameter){
+        super(parameter);
     }
 
     @Override
@@ -19,23 +22,8 @@ class AnalyticProperty implements IAnalyticProperty {
     }
 
     @Override
-    public String getSrcCode() {
+    public AccessSpecifier getAccessModifier() {
         return null;
-    }
-
-    @Override
-    public Visibility getAccessModifier() {
-        return null;
-    }
-
-    @Override
-    public boolean isFinal() {
-        return false;
-    }
-
-    @Override
-    public boolean isStatic() {
-        return false;
     }
 
     @Override
