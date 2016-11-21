@@ -13,17 +13,15 @@
 
 <Pane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="612.0" prefWidth="928.0" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
     <children>
-      <ComboBox disable="true" layoutX="540.0" layoutY="570.0" prefHeight="27.0" prefWidth="200.0" />
-      <CheckBox disable="true" layoutX="148.0" layoutY="575.0" mnemonicParsing="false" text="Only class" />
-      <CheckBox disable="true" layoutX="417.0" layoutY="575.0" mnemonicParsing="false" text="Only function" />
-      <ComboBox disable="true" layoutX="251.0" layoutY="570.0" prefWidth="150.0" />
+      <ComboBox fx:id="onlyFunctionComboBox" disable="true" layoutX="540.0" layoutY="570.0" prefHeight="27.0" prefWidth="200.0" />
+      <CheckBox fx:id="onlyClassCheckBox" disable="true" layoutX="148.0" layoutY="575.0" mnemonicParsing="false" onAction="#onClickOnlyClassCheckBox" text="Only class" />
+      <CheckBox fx:id="onlyFunctionCheckBox" disable="true" layoutX="417.0" layoutY="575.0" mnemonicParsing="false" onAction="#onClickOnlyFunctionCheckBox" text="Only function" />
+      <ComboBox fx:id="onlyClassComboBox" disable="true" layoutX="251.0" layoutY="570.0" onAction="#onClickOnlyClassComboBox" prefWidth="150.0" />
       <TextArea fx:id="textArea" editable="false" layoutX="10.0" layoutY="34.0" prefHeight="516.0" prefWidth="386.0" />
       <TableView layoutX="420.0" layoutY="34.0" prefHeight="296.0" prefWidth="494.0">
         <columns>
-          <TableColumn prefWidth="109.0" text="File name" />
-          <TableColumn prefWidth="99.0" text="Last modify" />
-          <TableColumn prefWidth="117.0" text="Class name" />
-          <TableColumn prefWidth="167.0" text="Function name" />
+          <TableColumn prefWidth="386.0" text="File name" />
+          <TableColumn minWidth="0.0" prefWidth="107.0" text="Last modify" />
         </columns>
       </TableView>
       <Button fx:id="calculateMetrixButton" disable="true" layoutX="796.0" layoutY="571.0" mnemonicParsing="false" onAction="#onClickCalculateMetrix" text="Calculate metrix" />
