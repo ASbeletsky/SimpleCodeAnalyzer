@@ -163,25 +163,28 @@ public class Controller implements Initializable {
             calculator.calculateMetrix();
 
             int numberOfUniqueOperators = calculator.getNumberOfUniqueOperators();
-            String numberOfUniqueOperatorsString = String.format("Number of Unique Operators: %d", numberOfUniqueOperators);
+            String numberOfUniqueOperatorsString = String.format("Число уникальных операторов: %d", numberOfUniqueOperators);
 
             int numberOfUniqueOperands = calculator.getNumberOfUniqueOperands();
-            String numberOfUniqueOperandsString = String.format("Number of Unique Operands: %d", numberOfUniqueOperands);
+            String numberOfUniqueOperandsString = String.format("Число уникальных операндов: %d", numberOfUniqueOperands);
 
             int numberOfOperators = calculator.getNumberOfOperators();
-            String numberOfOperatorsString = String.format("Number of Operators: %d", numberOfOperators);
+            String numberOfOperatorsString = String.format("Общее число операторов: %d", numberOfOperators);
 
             int numberOfOperands = calculator.getNumberOfOperands();
-            String numberOfOperandsString = String.format("Number of Operands: %d", numberOfOperands);
+            String numberOfOperandsString = String.format("Общее число операндов: %d", numberOfOperands);
 
             int programVocabulary = calculator.getProgramVocabulary();
-            String programVocabularyString = String.format("Program Vocabulary: %d", programVocabulary);
+            String programVocabularyString = String.format("Словарь программы: %d", programVocabulary);
 
             int programLength = calculator.getProgramLength();
-            String programLengthString = String.format("Program Length: %d", programLength);
+            String programLengthString = String.format("Длина программы: %d", programLength);
 
             double programVolume = calculator.getProgramVolume();
-            String programVolumeString = String.format("Program Volume: %.2f", programVolume);
+            String programVolumeString = String.format("Объем программы: %.2f", programVolume);
+
+            int errorsCount = calculator.getErrorsCount();
+            String errorsCountString = String.format("Количество ошибок: %d", errorsCount);
 
             ObservableList <String> items = FXCollections.observableArrayList(numberOfUniqueOperatorsString,
                     numberOfUniqueOperandsString,
@@ -189,7 +192,8 @@ public class Controller implements Initializable {
                     numberOfOperandsString,
                     programVocabularyString,
                     programLengthString,
-                    programVolumeString);
+                    programVolumeString,
+                    errorsCountString);
             resultListView.setItems(items);
         } catch (IOException | ParseException e) {
             showAlert(e.getMessage());
