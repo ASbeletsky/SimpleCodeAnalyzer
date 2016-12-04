@@ -21,6 +21,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import ui.mccabe.graph.McCabeGraph;
+import ui.mccabe.graph.McCabeGraphDisplayer;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +87,19 @@ public class Controller implements Initializable {
             tableView.setItems(history);
             tableView.getSelectionModel().select(history.size() - 1);
             changeSourceFile();
+
+            try {
+                String graphSrc = content;
+                int packageIndex = graphSrc.indexOf("package");
+                if(packageIndex >= 0) {
+                    graphSrc = graphSrc.substring(graphSrc.indexOf(";"));
+                }
+                McCabeGraph graph = new McCabeGraph(graphSrc);
+                new McCabeGraphDisplayer(graph).displayGraphInJFrame();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         } catch (IOException e) {
             showAlert(e.getMessage());
             e.printStackTrace();
