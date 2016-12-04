@@ -17,6 +17,7 @@ import bl.model.impl.AnalyticFile;
 import bl.model.impl.AnalyticMethod;
 import bl.model.impl.SourceFile;
 import com.github.javaparser.ParseException;
+import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,7 +30,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import ui.mccabe.graph.McCabeGraph;
+import ui.mccabe.graph.McCabeGraphDisplayer;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
@@ -59,20 +63,20 @@ public class Controller implements Initializable {
     @FXML
     CheckBox onlyClassCheckBox;
     @FXML
-    ComboBox <String> onlyClassComboBox;
+    ComboBox<String> onlyClassComboBox;
     @FXML
     CheckBox onlyFunctionCheckBox;
     @FXML
-    ComboBox <String> onlyFunctionComboBox;
+    ComboBox<String> onlyFunctionComboBox;
     @FXML
     TableView tableView;
 
-    private ObservableList <SourceFile> history;
+    private ObservableList<SourceFile> history;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         history = FXCollections.observableArrayList();
-        ObservableList <TableColumn> columns = tableView.getColumns();
+        ObservableList<TableColumn> columns = tableView.getColumns();
         TableColumn column = columns.get(0);
         column.setCellValueFactory(new PropertyValueFactory<SourceFile, String>("name"));
         column = columns.get(1);
@@ -82,7 +86,7 @@ public class Controller implements Initializable {
     public void onClickSelectFile(ActionEvent actionEvent) throws ParseException {
         try {
             File file = openFile();
-            String name = file.getName().replace(".java","");
+            String name = file.getName().replace(".java", "");
             Date date = new Date(file.lastModified());
             SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
             String lastModified = format.format(date);
@@ -92,6 +96,7 @@ public class Controller implements Initializable {
             tableView.setItems(history);
             tableView.getSelectionModel().select(history.size() - 1);
             changeSourceFile();
+
         } catch (IOException e) {
             showAlert(e.getMessage());
             e.printStackTrace();
@@ -104,8 +109,8 @@ public class Controller implements Initializable {
         if (onlyClassCheckBox.isSelected()) {
             try {
                 IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
-                List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
-                ObservableList <String> items = FXCollections.observableArrayList();
+                List<IAnalyticClass> analyticClasses = analyticFile.getClasses();
+                ObservableList<String> items = FXCollections.observableArrayList();
                 for (int index = 0; index < analyticClasses.size(); index++) {
                     IAnalyticClass analyticClass = analyticClasses.get(index);
                     items.add(analyticClass.getName());
@@ -122,25 +127,25 @@ public class Controller implements Initializable {
 
     public void onClickOnlyClassComboBox(ActionEvent actionEvent) {
         onlyFunctionCheckBox.setDisable(false);
-            try {
-                IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
-                List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
-                ObservableList <String> items = FXCollections.observableArrayList();
-                for (int i = 0; i < analyticClasses.size(); i++) {
-                    IAnalyticClass analyticClass = analyticClasses.get(i);
-                    if (analyticClass.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())) {
-                        for (int j = 0; j < analyticClass.getMethods().size(); j++) {
-                            IAnalyticMethod analyticMethod = analyticClass.getMethods().get(j);
-                            items.add(analyticMethod.getName());
-                        }
-                        onlyFunctionComboBox.setItems(items);
-                        break;
+        try {
+            IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
+            List<IAnalyticClass> analyticClasses = analyticFile.getClasses();
+            ObservableList<String> items = FXCollections.observableArrayList();
+            for (int i = 0; i < analyticClasses.size(); i++) {
+                IAnalyticClass analyticClass = analyticClasses.get(i);
+                if (analyticClass.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())) {
+                    for (int j = 0; j < analyticClass.getMethods().size(); j++) {
+                        IAnalyticMethod analyticMethod = analyticClass.getMethods().get(j);
+                        items.add(analyticMethod.getName());
                     }
+                    onlyFunctionComboBox.setItems(items);
+                    break;
                 }
-            } catch (IOException | ParseException e) {
-                showAlert(e.getMessage());
-                e.printStackTrace();
             }
+        } catch (IOException | ParseException e) {
+            showAlert(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void onClickOnlyFunctionCheckBox(ActionEvent actionEvent) {
@@ -153,37 +158,53 @@ public class Controller implements Initializable {
 
     public void onClickCalculateMetrix(ActionEvent actionEvent) {
         try {
-            IHalsteadMetrixCalculator <?extends IAnalytic> calculator;
+            IHalsteadMetrixCalculator<? extends IAnalytic> calculator;
             IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
             calculator = new HalsteadMetrixFileCalculator(analyticFile);
 
+
             CyclomaticComplexityService cyclomaticComplexityservice = new CyclomaticComplexityService();
+
             SyntaxTreeService syntaxTreeService = new SyntaxTreeServiceImpl();
             CompilerService compilerService = new CompilerServiceImpl();
 
-            File compiledFile = compilerService.compileJavaSource(new File(currentSourceFile().file.getPath()));
-            InputStream inputStream = new BufferedInputStream(new FileInputStream(compiledFile));
-            ClassNode classNode = syntaxTreeService.buildSyntaxTreeForClass(inputStream);
-            long complexity = cyclomaticComplexityservice.calculateClassComplexity(classNode);
+
+            long complexity = -1;
+            ClassNode classNode = null;
+            try {
+                File compiledFile = compilerService.compileJavaSource(new File(currentSourceFile().file.getPath()));
+                try (InputStream inputStream = new BufferedInputStream(new FileInputStream(compiledFile))) {
+                    classNode = syntaxTreeService.buildSyntaxTreeForClass(inputStream);
+                    complexity = cyclomaticComplexityservice.calculateClassComplexity(classNode);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert(e.getMessage());
+            }
 
             if (!(!onlyFunctionComboBox.getSelectionModel().isEmpty() && onlyFunctionComboBox.getSelectionModel().getSelectedItem().length() > 0)) {
-                List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
-                Optional<IAnalyticClass> iAnalyticClassOptional = analyticClasses.stream().filter(item->item.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())).findFirst();
-                if (iAnalyticClassOptional.isPresent()){
+                List<IAnalyticClass> analyticClasses = analyticFile.getClasses();
+                Optional<IAnalyticClass> iAnalyticClassOptional = analyticClasses.stream().filter(item -> item.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())).findFirst();
+                if (iAnalyticClassOptional.isPresent()) {
                     calculator = new HalsteadMetrixClassCalculator(iAnalyticClassOptional.get());
                 }
             } else if (!onlyClassComboBox.getSelectionModel().isEmpty() && onlyClassComboBox.getSelectionModel().getSelectedItem().length() > 0) {
-                List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
-                Optional<IAnalyticClass> iAnalyticClassOptional = analyticClasses.stream().filter(item->item.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())).findFirst();
+                List<IAnalyticClass> analyticClasses = analyticFile.getClasses();
+                Optional<IAnalyticClass> iAnalyticClassOptional = analyticClasses.stream().filter(item -> item.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())).findFirst();
                 if (iAnalyticClassOptional.isPresent()) {
-                    List <IAnalyticMethod> analyticMethods = iAnalyticClassOptional.get().getMethods();
-                    Optional<IAnalyticMethod> iAnalyticMethodOptional = analyticMethods.stream().filter(item->item.getName().equals(onlyFunctionComboBox.getSelectionModel().getSelectedItem())).findFirst();
+                    List<IAnalyticMethod> analyticMethods = iAnalyticClassOptional.get().getMethods();
+                    Optional<IAnalyticMethod> iAnalyticMethodOptional = analyticMethods.stream().filter(item -> item.getName().equals(onlyFunctionComboBox.getSelectionModel().getSelectedItem())).findFirst();
                     if (iAnalyticMethodOptional.isPresent()) {
                         calculator = new HalsteadMetrixMethodCalculator(iAnalyticMethodOptional.get());
                         AnalyticMethod method = (AnalyticMethod) iAnalyticMethodOptional.get();
-                        Optional<MethodNode> methodNode = syntaxTreeService.getMethodFromClass(classNode, method.getName());
-                        if (methodNode.isPresent()) {
-                            complexity = cyclomaticComplexityservice.calculateMethodComplexity(methodNode.get());
+                        try {
+                            Optional<MethodNode> methodNode = syntaxTreeService.getMethodFromClass(classNode, method.getName());
+                            if (methodNode.isPresent()) {
+                                complexity = cyclomaticComplexityservice.calculateMethodComplexity(methodNode.get());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showAlert(e.getMessage());
                         }
                     }
                 }
@@ -217,7 +238,7 @@ public class Controller implements Initializable {
 
             String complexityString = String.format("Цикломатическая сложность: %d", complexity);
 
-            ObservableList <String> items = FXCollections.observableArrayList(numberOfUniqueOperatorsString,
+            ObservableList<String> items = FXCollections.observableArrayList(numberOfUniqueOperatorsString,
                     numberOfUniqueOperandsString,
                     numberOfOperatorsString,
                     numberOfOperandsString,
@@ -244,11 +265,16 @@ public class Controller implements Initializable {
         return fileChooser.showOpenDialog(selectFileButton.getScene().getWindow());
     }
 
+    @Nullable
     private SourceFile currentSourceFile() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        index = index >= 0 ? index : 0;
-        SourceFile sourceFile = history.get(index);
-        return sourceFile;
+        try {
+            int index = tableView.getSelectionModel().getSelectedIndex();
+            index = index >= 0 ? index : 0;
+            SourceFile sourceFile = history.get(index);
+            return sourceFile;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void changeSourceFile() {
@@ -275,11 +301,39 @@ public class Controller implements Initializable {
     }
 
     private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Exception");
         alert.setHeaderText("Something went wrong");
         alert.setContentText(message);
         alert.showAndWait();
     }
 
+    public void showGraph(ActionEvent actionEvent) {
+        try {
+            SourceFile sourceFile = currentSourceFile();
+            if(sourceFile == null) {
+                return;
+            }
+
+            String graphSrc = sourceFile.getContent();
+            int packageIndex = graphSrc.indexOf("package");
+            if (packageIndex >= 0) {
+                graphSrc = graphSrc.substring(graphSrc.indexOf(";"));
+            }
+
+            McCabeGraph graph = new McCabeGraph(graphSrc);
+
+
+            JFrame frame = new JFrame("Graph for " + sourceFile.getName());
+
+            frame.getContentPane().add(new McCabeGraphDisplayer(graph).buildGraphPanel());
+
+            frame.pack();
+            frame.setVisible(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(e.getMessage());
+        }
+    }
 }
