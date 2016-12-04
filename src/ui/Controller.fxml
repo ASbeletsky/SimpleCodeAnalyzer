@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="612.0" prefWidth="928.0" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
+    <children>
+      <ComboBox fx:id="onlyFunctionComboBox" disable="true" layoutX="553.0" layoutY="570.0" prefHeight="27.0" prefWidth="200.0" />
+      <CheckBox fx:id="onlyClassCheckBox" disable="true" layoutX="130.0" layoutY="575.0" mnemonicParsing="false" onAction="#onClickOnlyClassCheckBox" text="Только класс" />
+      <CheckBox fx:id="onlyFunctionCheckBox" disable="true" layoutX="414.0" layoutY="575.0" mnemonicParsing="false" onAction="#onClickOnlyFunctionCheckBox" text="Только функция" />
+      <ComboBox fx:id="onlyClassComboBox" disable="true" layoutX="252.0" layoutY="570.0" onAction="#onClickOnlyClassComboBox" prefWidth="150.0" />
+      <TextArea fx:id="textArea" editable="false" layoutX="10.0" layoutY="34.0" prefHeight="516.0" prefWidth="386.0" />
+      <TableView fx:id="tableView" layoutX="420.0" layoutY="34.0" onMouseClicked="#onClickTableView" prefHeight="296.0" prefWidth="494.0">
+        <columns>
+          <TableColumn prefWidth="266.0" text="Имя файла" />
+          <TableColumn minWidth="0.0" prefWidth="227.0" text="Время последней модификации" />
+        </columns>
+      </TableView>
+      <Button fx:id="calculateMetrixButton" disable="true" layoutX="771.0" layoutY="571.0" mnemonicParsing="false" onAction="#onClickCalculateMetrix" text="Вычислить метрики" />
+      <Button fx:id="selectFileButton" layoutX="10.0" layoutY="571.0" mnemonicParsing="false" onAction="#onClickSelectFile" text="Выбор файла" />
+      <ListView fx:id="resultListView" layoutX="420.0" layoutY="375.0" prefHeight="173.0" prefWidth="494.0" />
+      <Label layoutX="10.0" layoutY="10.0" text="Исходный код:" />
+      <Label layoutX="420.0" layoutY="346.0" text="Результаты вычислений:" />
+      <Separator layoutX="407.0" orientation="VERTICAL" prefHeight="559.0" prefWidth="6.0" />
+      <Label layoutX="420.0" layoutY="10.0" text="История изменения файлов:" />
+      <Separator layoutY="554.0" prefHeight="10.0" prefWidth="928.0" />
+    </children>
+</Pane>
