@@ -23,7 +23,7 @@ public class HalsteadMetrixCalculatorTest {
     @Test
     public void calculateForFile() throws IOException, ParseException {
         //Arrange
-        File file = new File("./tests/DummyClass.java");
+        File file = new File("src/test/resources/DummyClass.java");
         IAnalyticFile analyticFile = new AnalyticFile(file);
 
         //Act
