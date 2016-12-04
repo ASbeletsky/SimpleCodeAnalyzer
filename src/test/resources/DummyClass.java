@@ -1,6 +1,5 @@
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -52,7 +51,7 @@ public abstract class DummyClass implements Runnable {
          * @param <Q>
          * @return
          */
-        @NotNull
+        @Nonnull
         @SuppressWarnings("unused")
         public <Q> T getGeneric(@Nullable List<? super Q> inParamGeneric, int x) throws IOException, IOException {
             try {
