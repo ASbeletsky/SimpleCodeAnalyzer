@@ -157,6 +157,10 @@ public abstract class HalsteadMetrixCalculatorBase<TAnalytic extends IAnalytic> 
         return this.getProgramLength() * (Math.log(this.getProgramVocabulary()) / Math.log(2));
     }
 
+    public int getErrorsCount() {
+        return 0;
+    }
+
     public void calculateMetrix(){
         this.collectOperandsAndOperators(this.getAnalyticAbstractTree());
     }

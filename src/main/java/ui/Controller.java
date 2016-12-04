@@ -6,10 +6,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
 import bl.model.IAnalytic;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +18,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import bl.metrix.halstead.IHalsteadMetrixCalculator;
@@ -27,8 +30,7 @@ import bl.model.IAnalyticFile;
 import bl.model.IAnalyticClass;
 import bl.model.IAnalyticMethod;
 import bl.model.impl.AnalyticFile;
-import bl.model.impl.AnalyticClass;
-import bl.model.impl.AnalyticMethod;
+import bl.model.impl.SourceFile;
 
 import com.github.javaparser.ParseException;
 
@@ -56,27 +58,34 @@ public class Controller implements Initializable {
     CheckBox onlyFunctionCheckBox;
     @FXML
     ComboBox <String> onlyFunctionComboBox;
+    @FXML
+    TableView tableView;
 
-    private File file;
+    private ObservableList <SourceFile> history;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources) {
+        history = FXCollections.observableArrayList();
+        ObservableList <TableColumn> columns = tableView.getColumns();
+        TableColumn column = columns.get(0);
+        column.setCellValueFactory(new PropertyValueFactory<SourceFile, String>("name"));
+        column = columns.get(1);
+        column.setCellValueFactory(new PropertyValueFactory<SourceFile, String>("lastModified"));
+    }
 
-    public void onClickSelectFile(ActionEvent actionEvent) {
+    public void onClickSelectFile(ActionEvent actionEvent) throws ParseException {
         try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Resource File");
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Java files", "*.java"));
-            file = fileChooser.showOpenDialog(selectFileButton.getScene().getWindow());
-            String fileString = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
-            textArea.setText(fileString);
-            boolean disabled = (textArea.getText().length() == 0);
-            onlyClassCheckBox.setDisable(disabled);
-            calculateMetrixButton.setDisable(disabled);
-            clearControls();
-            onlyClassComboBox.setDisable(true);
-            onlyClassCheckBox.setSelected(false);
-            resultListView.getItems().clear();
+            File file = openFile();
+            String name = file.getName().replace(".java","");
+            Date date = new Date(file.lastModified());
+            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            String lastModified = format.format(date);
+            String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+            SourceFile sourceFile = new SourceFile(name, lastModified, content, file);
+            history.add(sourceFile);
+            tableView.setItems(history);
+            tableView.getSelectionModel().select(history.size() - 1);
+            changeSourceFile();
         } catch (IOException e) {
             showAlert(e.getMessage());
             e.printStackTrace();
@@ -88,7 +97,7 @@ public class Controller implements Initializable {
         onlyClassComboBox.setDisable(disabled);
         if (onlyClassCheckBox.isSelected()) {
             try {
-                IAnalyticFile analyticFile = new AnalyticFile(file);
+                IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
                 List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
                 ObservableList <String> items = FXCollections.observableArrayList();
                 for (int index = 0; index < analyticClasses.size(); index++) {
@@ -108,7 +117,7 @@ public class Controller implements Initializable {
     public void onClickOnlyClassComboBox(ActionEvent actionEvent) {
         onlyFunctionCheckBox.setDisable(false);
             try {
-                IAnalyticFile analyticFile = new AnalyticFile(file);
+                IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
                 List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
                 ObservableList <String> items = FXCollections.observableArrayList();
                 for (int i = 0; i < analyticClasses.size(); i++) {
@@ -139,7 +148,7 @@ public class Controller implements Initializable {
     public void onClickCalculateMetrix(ActionEvent actionEvent) {
         try {
             IHalsteadMetrixCalculator <?extends IAnalytic> calculator;
-            IAnalyticFile analyticFile = new AnalyticFile(file);
+            IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
             calculator = new HalsteadMetrixFileCalculator(analyticFile);
 
             if (!(!onlyFunctionComboBox.getSelectionModel().isEmpty() && onlyFunctionComboBox.getSelectionModel().getSelectedItem().length() > 0)) {
@@ -163,25 +172,28 @@ public class Controller implements Initializable {
             calculator.calculateMetrix();
 
             int numberOfUniqueOperators = calculator.getNumberOfUniqueOperators();
-            String numberOfUniqueOperatorsString = String.format("Number of Unique Operators: %d", numberOfUniqueOperators);
+            String numberOfUniqueOperatorsString = String.format("Число уникальных операторов: %d", numberOfUniqueOperators);
 
             int numberOfUniqueOperands = calculator.getNumberOfUniqueOperands();
-            String numberOfUniqueOperandsString = String.format("Number of Unique Operands: %d", numberOfUniqueOperands);
+            String numberOfUniqueOperandsString = String.format("Число уникальных операндов: %d", numberOfUniqueOperands);
 
             int numberOfOperators = calculator.getNumberOfOperators();
-            String numberOfOperatorsString = String.format("Number of Operators: %d", numberOfOperators);
+            String numberOfOperatorsString = String.format("Общее число операторов: %d", numberOfOperators);
 
             int numberOfOperands = calculator.getNumberOfOperands();
-            String numberOfOperandsString = String.format("Number of Operands: %d", numberOfOperands);
+            String numberOfOperandsString = String.format("Общее число операндов: %d", numberOfOperands);
 
             int programVocabulary = calculator.getProgramVocabulary();
-            String programVocabularyString = String.format("Program Vocabulary: %d", programVocabulary);
+            String programVocabularyString = String.format("Словарь программы: %d", programVocabulary);
 
             int programLength = calculator.getProgramLength();
-            String programLengthString = String.format("Program Length: %d", programLength);
+            String programLengthString = String.format("Длина программы: %d", programLength);
 
             double programVolume = calculator.getProgramVolume();
-            String programVolumeString = String.format("Program Volume: %.2f", programVolume);
+            String programVolumeString = String.format("Объем программы: %.2f", programVolume);
+
+            int errorsCount = calculator.getErrorsCount();
+            String errorsCountString = String.format("Количество ошибок: %d", errorsCount);
 
             ObservableList <String> items = FXCollections.observableArrayList(numberOfUniqueOperatorsString,
                     numberOfUniqueOperandsString,
@@ -189,12 +201,46 @@ public class Controller implements Initializable {
                     numberOfOperandsString,
                     programVocabularyString,
                     programLengthString,
-                    programVolumeString);
+                    programVolumeString,
+                    errorsCountString);
             resultListView.setItems(items);
         } catch (IOException | ParseException e) {
             showAlert(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void onClickTableView(MouseEvent mouseEvent) {
+        changeSourceFile();
+    }
+
+    private File openFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Java files", "*.java"));
+        return fileChooser.showOpenDialog(selectFileButton.getScene().getWindow());
+    }
+
+    private SourceFile currentSourceFile() {
+        int index = tableView.getSelectionModel().getSelectedIndex();
+        index = index >= 0 ? index : 0;
+        SourceFile sourceFile = history.get(index);
+        return sourceFile;
+    }
+
+    private void changeSourceFile() {
+        textArea.setText(currentSourceFile().getContent());
+        changeControlsState();
+    }
+
+    private void changeControlsState() {
+        boolean disabled = (textArea.getText().length() == 0);
+        onlyClassCheckBox.setDisable(disabled);
+        calculateMetrixButton.setDisable(disabled);
+        clearControls();
+        onlyClassComboBox.setDisable(true);
+        onlyClassCheckBox.setSelected(false);
+        resultListView.getItems().clear();
     }
 
     private void clearControls() {
