@@ -18,7 +18,7 @@
       <CheckBox fx:id="onlyFunctionCheckBox" disable="true" layoutX="414.0" layoutY="575.0" mnemonicParsing="false" onAction="#onClickOnlyFunctionCheckBox" text="Только функция" />
       <ComboBox fx:id="onlyClassComboBox" disable="true" layoutX="252.0" layoutY="570.0" onAction="#onClickOnlyClassComboBox" prefWidth="150.0" />
       <TextArea fx:id="textArea" editable="false" layoutX="10.0" layoutY="34.0" prefHeight="516.0" prefWidth="386.0" />
-      <TableView layoutX="420.0" layoutY="34.0" prefHeight="296.0" prefWidth="494.0">
+      <TableView fx:id="tableView" layoutX="420.0" layoutY="34.0" onMouseClicked="#onClickTableView" prefHeight="296.0" prefWidth="494.0">
         <columns>
           <TableColumn prefWidth="266.0" text="Имя файла" />
           <TableColumn minWidth="0.0" prefWidth="227.0" text="Время последней модификации" />
