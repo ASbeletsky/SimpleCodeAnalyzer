@@ -4,11 +4,17 @@ import bl.metrix.halstead.IHalsteadMetrixCalculator;
 import bl.metrix.halstead.calculators.HalsteadMetrixClassCalculator;
 import bl.metrix.halstead.calculators.HalsteadMetrixFileCalculator;
 import bl.metrix.halstead.calculators.HalsteadMetrixMethodCalculator;
+import bl.metrix.mccabe.service.CompilerService;
+import bl.metrix.mccabe.service.SyntaxTreeService;
+import bl.metrix.mccabe.service.impl.CompilerServiceImpl;
+import bl.metrix.mccabe.service.impl.CyclomaticComplexityService;
+import bl.metrix.mccabe.service.impl.SyntaxTreeServiceImpl;
 import bl.model.IAnalytic;
 import bl.model.IAnalyticClass;
 import bl.model.IAnalyticFile;
 import bl.model.IAnalyticMethod;
 import bl.model.impl.AnalyticFile;
+import bl.model.impl.AnalyticMethod;
 import bl.model.impl.SourceFile;
 import com.github.javaparser.ParseException;
 import javafx.collections.FXCollections;
@@ -23,9 +29,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import ui.mccabe.graph.McCabeGraph;
 import ui.mccabe.graph.McCabeGraphDisplayer;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -165,6 +172,15 @@ public class Controller implements Initializable {
             IAnalyticFile analyticFile = new AnalyticFile(currentSourceFile().file);
             calculator = new HalsteadMetrixFileCalculator(analyticFile);
 
+            CyclomaticComplexityService cyclomaticComplexityservice = new CyclomaticComplexityService();
+            SyntaxTreeService syntaxTreeService = new SyntaxTreeServiceImpl();
+            CompilerService compilerService = new CompilerServiceImpl();
+
+            File compiledFile = compilerService.compileJavaSource(new File(currentSourceFile().file.getPath()));
+            InputStream inputStream = new BufferedInputStream(new FileInputStream(compiledFile));
+            ClassNode classNode = syntaxTreeService.buildSyntaxTreeForClass(inputStream);
+            long complexity = cyclomaticComplexityservice.calculateClassComplexity(classNode);
+
             if (!(!onlyFunctionComboBox.getSelectionModel().isEmpty() && onlyFunctionComboBox.getSelectionModel().getSelectedItem().length() > 0)) {
                 List <IAnalyticClass> analyticClasses = analyticFile.getClasses();
                 Optional<IAnalyticClass> iAnalyticClassOptional = analyticClasses.stream().filter(item->item.getName().equals(onlyClassComboBox.getSelectionModel().getSelectedItem())).findFirst();
@@ -179,6 +195,11 @@ public class Controller implements Initializable {
                     Optional<IAnalyticMethod> iAnalyticMethodOptional = analyticMethods.stream().filter(item->item.getName().equals(onlyFunctionComboBox.getSelectionModel().getSelectedItem())).findFirst();
                     if (iAnalyticMethodOptional.isPresent()) {
                         calculator = new HalsteadMetrixMethodCalculator(iAnalyticMethodOptional.get());
+                        AnalyticMethod method = (AnalyticMethod) iAnalyticMethodOptional.get();
+                        Optional<MethodNode> methodNode = syntaxTreeService.getMethodFromClass(classNode, method.getName());
+                        if (methodNode.isPresent()) {
+                            complexity = cyclomaticComplexityservice.calculateMethodComplexity(methodNode.get());
+                        }
                     }
                 }
             }
@@ -209,6 +230,8 @@ public class Controller implements Initializable {
             int errorsCount = calculator.getErrorsCount();
             String errorsCountString = String.format("Количество ошибок: %d", errorsCount);
 
+            String complexityString = String.format("Цикломатическая сложность: %d", complexity);
+
             ObservableList <String> items = FXCollections.observableArrayList(numberOfUniqueOperatorsString,
                     numberOfUniqueOperandsString,
                     numberOfOperatorsString,
@@ -216,7 +239,8 @@ public class Controller implements Initializable {
                     programVocabularyString,
                     programLengthString,
                     programVolumeString,
-                    errorsCountString);
+                    errorsCountString,
+                    complexityString);
             resultListView.setItems(items);
         } catch (IOException | ParseException e) {
             showAlert(e.getMessage());
