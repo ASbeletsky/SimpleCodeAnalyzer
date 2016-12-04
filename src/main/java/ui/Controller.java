@@ -233,8 +233,8 @@ public class Controller implements Initializable {
             double programVolume = calculator.getProgramVolume();
             String programVolumeString = String.format("Объем программы: %.2f", programVolume);
 
-            int errorsCount = calculator.getErrorsCount();
-            String errorsCountString = String.format("Количество ошибок: %d", errorsCount);
+            double errorsCount = calculator.getErrorsCount();
+            String errorsCountString = String.format("Количество ошибок: %.2f", errorsCount);
 
             String complexityString = String.format("Цикломатическая сложность: %d", complexity);
 
