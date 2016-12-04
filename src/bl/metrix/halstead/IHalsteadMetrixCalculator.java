@@ -15,5 +15,7 @@ public interface IHalsteadMetrixCalculator<TAnalytic extends IAnalytic>   {
     int getProgramLength();
     double getProgramVolume();
 
+    int getErrorsCount();
+
     void calculateMetrix();
 }
