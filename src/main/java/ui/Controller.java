@@ -34,6 +34,7 @@ import ui.mccabe.graph.McCabeGraphDisplayer;
 
 import javax.annotation.Nullable;
 import javax.swing.*;
+import javax.tools.ToolProvider;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
@@ -77,6 +78,12 @@ public class Controller implements Initializable {
         column.setCellValueFactory(new PropertyValueFactory<SourceFile, String>("name"));
         column = columns.get(1);
         column.setCellValueFactory(new PropertyValueFactory<SourceFile, String>("lastModified"));
+
+
+        if(ToolProvider.getSystemJavaCompiler() == null) {
+            String javaHome = System.getProperty( "java.home");
+            showAlert("Внимание! Скопируйте файл tools.jar в папку " + javaHome + "\\lib\\  и перезапустите программу!");
+        }
     }
 
     public void onClickSelectFile(ActionEvent actionEvent) throws ParseException {
@@ -298,8 +305,8 @@ public class Controller implements Initializable {
 
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Exception");
-        alert.setHeaderText("Something went wrong");
+        alert.setTitle("SimpleCodeAnalyzer");
+        alert.setHeaderText("Что-то пошло не так :(");
         alert.setContentText(message);
         alert.showAndWait();
     }

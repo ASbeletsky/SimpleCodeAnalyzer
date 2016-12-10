@@ -23,6 +23,13 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         try {
+            String javaHome = System.getProperty( "java.home");
+            System.err.println("java.home: " + javaHome);
+
+            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.err.println("please, copy \"tools.jar\" file  to the " + (javaHome + "\\lib\\ directory!"));
+            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
             Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("Controller.fxml"));
             primaryStage.setTitle("Надежность программного обеспечения");
             primaryStage.setScene(new Scene(root, 928, 612));
