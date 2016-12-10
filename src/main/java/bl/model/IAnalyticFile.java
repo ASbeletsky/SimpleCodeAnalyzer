@@ -1,14 +1,14 @@
 package bl.model;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.sun.istack.internal.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * Created by Peter on 14.09.2016.
  */
 public interface IAnalyticFile extends IAnalytic<CompilationUnit> {
-    @NotNull
+    @Nonnull
     List<IAnalyticClass> getClasses();
 }

@@ -17,7 +17,6 @@ import bl.model.impl.AnalyticFile;
 import bl.model.impl.AnalyticMethod;
 import bl.model.impl.SourceFile;
 import com.github.javaparser.ParseException;
-import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,6 +32,7 @@ import org.objectweb.asm.tree.MethodNode;
 import ui.mccabe.graph.McCabeGraph;
 import ui.mccabe.graph.McCabeGraphDisplayer;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.*;
 import java.net.URL;
@@ -43,10 +43,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-/**
- * Created by Peter on 20.11.2016.
- */
 
 public class Controller implements Initializable {
 

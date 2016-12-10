@@ -1,18 +1,15 @@
 package bl.model.impl;
 
-import bl.model.*;
+import bl.model.IAnalyticClass;
+import bl.model.IAnalyticField;
+import bl.model.IAnalyticMethod;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.ast.stmt.TypeDeclarationStmt;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.sun.deploy.util.ArrayUtil;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,26 +28,26 @@ public class AnalyticClass extends AnalyticBase<ClassOrInterfaceDeclaration> imp
         this((ClassOrInterfaceDeclaration) JavaParser.parseBodyDeclaration(src));
     }
 
-    public AnalyticClass(ClassOrInterfaceDeclaration declaration){
+    public AnalyticClass(ClassOrInterfaceDeclaration declaration) {
         super(declaration);
         this.fillMembers();
     }
 
-    private void fillMembers(){
-        List<BodyDeclaration> classMembers =  this.codeBlock.getMembers();
-        for (BodyDeclaration member: classMembers){
-            if (member instanceof MethodDeclaration){
-                IAnalyticMethod method = new AnalyticMethod((MethodDeclaration)member);
+    private void fillMembers() {
+        List<BodyDeclaration> classMembers = this.codeBlock.getMembers();
+        for (BodyDeclaration member : classMembers) {
+            if (member instanceof MethodDeclaration) {
+                IAnalyticMethod method = new AnalyticMethod((MethodDeclaration) member);
                 this.methods.add(method);
             }
 
-            if (member instanceof FieldDeclaration){
-                IAnalyticField field = new AnalyticField((FieldDeclaration)member);
+            if (member instanceof FieldDeclaration) {
+                IAnalyticField field = new AnalyticField((FieldDeclaration) member);
                 this.fields.add(field);
             }
 
-            if (member instanceof ClassOrInterfaceDeclaration){
-                IAnalyticClass innerClass = new AnalyticClass((ClassOrInterfaceDeclaration)member);
+            if (member instanceof ClassOrInterfaceDeclaration) {
+                IAnalyticClass innerClass = new AnalyticClass((ClassOrInterfaceDeclaration) member);
                 this.innerClasses.add(innerClass);
             }
         }
@@ -62,9 +59,10 @@ public class AnalyticClass extends AnalyticBase<ClassOrInterfaceDeclaration> imp
     }
 
     @Override
-    public List<IAnalyticField> getFields(){
+    public List<IAnalyticField> getFields() {
         return this.fields;
     }
+
     @Override
     public List<IAnalyticMethod> getMethods() {
         return methods;

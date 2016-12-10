@@ -3,7 +3,6 @@ package bl.model.impl;
 import bl.model.IAnalytic;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import java.io.ByteArrayInputStream;
@@ -20,24 +19,24 @@ public abstract class AnalyticBase<TCodeBlock extends Node> implements IAnalytic
         this(new ByteArrayInputStream(source.getBytes()));
     }
 
-    public  AnalyticBase(InputStream sourceSream) throws ParseException {
+    public AnalyticBase(InputStream sourceSream) throws ParseException {
         this.codeBlock = (TCodeBlock) JavaParser.parse(sourceSream);
         this.source = this.codeBlock.toString();
     }
 
-    public  AnalyticBase(TCodeBlock codeBlock){
+    public AnalyticBase(TCodeBlock codeBlock) {
         this.codeBlock = codeBlock;
         this.source = codeBlock.toString();
     }
 
-    public TCodeBlock getAbstractSynaxTree(){
+    public TCodeBlock getAbstractSynaxTree() {
         return codeBlock;
     }
 
     public abstract String getName();
 
-    public String getSourceCode(){
-        return  this.source;
+    public String getSourceCode() {
+        return this.source;
     }
 
     @Override

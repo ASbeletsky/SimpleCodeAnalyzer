@@ -1,35 +1,30 @@
 package bl.model;
 
-import bl.model.modifier.IAbstractModifier;
-import bl.model.modifier.IAccessModifier;
-import bl.model.modifier.IFinalModifier;
-import bl.model.modifier.IStaticModifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.sun.istack.internal.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * Created by Peter on 14.09.2016.
  */
 public interface IAnalyticClass extends IAnalytic<ClassOrInterfaceDeclaration> {
-    @NotNull
+    @Nonnull
     List<IAnalyticField> getFields();
 
-    @NotNull
+    @Nonnull
     List<IAnalyticMethod> getMethods();
 
-    @NotNull
+    @Nonnull
     List<IAnalyticClass> getInnerClasses();
 
-    @NotNull
+    @Nonnull
     IAnalyticClass getSuperclass();
 
-    @NotNull
+    @Nonnull
     List<IAnalyticClass> getInterfaces();
 
-    @NotNull
+    @Nonnull
     List<IAnalyticClass> getDependencies();
 
     //TODO: annotations

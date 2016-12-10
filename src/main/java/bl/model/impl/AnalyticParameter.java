@@ -2,17 +2,15 @@ package bl.model.impl;
 
 import bl.model.IAnalytic;
 import bl.model.IAnalyticParameter;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.expr.NameExpr;
 
 /**
  * Created by Peter on 14.09.2016.
  */
-public class AnalyticParameter extends AnalyticBase<Parameter>  implements IAnalyticParameter {
+public class AnalyticParameter extends AnalyticBase<Parameter> implements IAnalyticParameter {
 
-    public AnalyticParameter(Parameter parameter){
+    public AnalyticParameter(Parameter parameter) {
         super(parameter);
     }
 

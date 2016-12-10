@@ -1,9 +1,5 @@
 package bl.metrix;
 
-/**
- * Created by Peter on 04.12.2016.
- */
-
 import org.junit.Test;
 import ui.mccabe.graph.McCabeGraph;
 import ui.mccabe.graph.McCabeGraphDisplayer;
